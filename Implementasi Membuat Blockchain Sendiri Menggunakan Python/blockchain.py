@@ -59,5 +59,37 @@ class Blockchain (object) :
               content_hash = hashlib.sha256(content).hexdigest()
               
               return content_hash[:len(self.difficulty_target)] == self.difficulty_target
+       
+       # fungsi untuk menambahkan block
+       def append_block(self, nonce, hash_of_previous_block) :
+              block = {
+                     "index" : len(self.chain),
+                     "timestamp" : time(),
+                     "transaction" : self.current_transactions,
+                     "nonce" : nonce,
+                     "hash_of_previous_block" : hash_of_previous_block,
+              }
               
+              # reset pending transaction karena transaction berhasil dilakukan
+              self.current_transactions = []
+              
+              # tambahkan block ke chain
+              self.chain.append(block)
+              
+              return block
+       
+       # fungsi untuk menambahkan data transaksi
+       def add_transaction(self, sender, recipient, amount) :
+              # menambahkan transaksi ke dalam list transaksi
+              self.current_transactions.append({
+                     "amount" : amount,
+                     "recipient" : recipient,
+                     "sender" : sender       
+              })
+              
+              return self.last_block["index"] + 1
+       
+       @property
+       def last_block(self) :
+              return self.chain[-1]             
               
